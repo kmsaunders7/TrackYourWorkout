@@ -17,13 +17,8 @@ app.use(express.static("public"));
 mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/populatedb", { useNewUrlParser: true });
 
 // require the routes
-
-app.use(require("./routes/api_routes"))
-app.use(require("./routes/html_routes"))
-
-
-
-
+app.use(require("./routes/api_routes"));
+app.use(require("./routes/html_routes"));
 
 
 // confirms the server is listening on designated PORT
