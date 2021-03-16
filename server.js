@@ -15,7 +15,8 @@ app.use(express.json());
 app.use(express.static("public"));
 
 
-mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/workout", { useNewUrlParser: true, useFindAndModify: false }).catch(error => handleError(error));
+mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/workout", 
+{ useNewUrlParser: true, useFindAndModify: false })
 
 // require the routes
 app.use(require("./routes/api_routes"));
