@@ -7,17 +7,6 @@ const db = require('../models')
 // View the total duration of each workout from the past seven workouts on the stats page.
 
 
-// GET route to find a workout
-// router.get("/api/workouts", (req, res) => {
-//   Workout.col.aggregate( [ { $addFields: { totalDuration: { $sum: "$exercises.duration" }}} ] )
-//     .then(dbWorkout => {
-//       res.json(dbWorkout);
-//     })
-//     .catch(err => {
-//       res.json(err);
-//     });
-// });
-
 router.get('/api/workouts', (req, res) => {
   db.Workout.aggregate([
     {
@@ -61,15 +50,22 @@ router.put("/api/workouts/:id", (req, res) => {
     });
 });
 
-// GET route for the last exercise -- using date -1
-// router.get("api/workouts", (req, res) => {
-//   Workout.find({}).sort({ date: -1 })
-//   .then((dbWorkout) => {
-//     res.json(dbWorkout);
-//   }).catch(err => {
-//     res.json(err);
-//   });
-// });
-
+router.get("api/workouts/range", (req, res) => {
+  db.Workout.aggregate([
+    {
+      $addFields: {
+        totalDuration: {
+          $sum: '$exercises.duration',
+        },
+      },
+    },
+  ])
+    .then((dbWorkouts) => {
+      res.json(dbWorkouts);
+    })
+    .catch((err) => {
+      res.json(err);
+    });
+});
 
 module.exports = router
