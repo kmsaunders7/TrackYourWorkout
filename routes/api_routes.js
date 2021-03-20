@@ -1,14 +1,37 @@
 const router = require('express').Router()
-const Workout = require('../models')
+const db = require('../models')
+
+// Add exercises to the most recent workout plan.
+// Add new exercises to a new workout plan.
+// View the combined weight of multiple exercises from the past seven workouts on the stats page.
+// View the total duration of each workout from the past seven workouts on the stats page.
 
 
 // GET route to find a workout
-router.get("/workouts", (req, res) => {
-  Workout.find({})
-    .then(dbWorkout => {
-      res.json(dbWorkout);
+// router.get("/api/workouts", (req, res) => {
+//   Workout.col.aggregate( [ { $addFields: { totalDuration: { $sum: "$exercises.duration" }}} ] )
+//     .then(dbWorkout => {
+//       res.json(dbWorkout);
+//     })
+//     .catch(err => {
+//       res.json(err);
+//     });
+// });
+
+router.get('/api/workouts', (req, res) => {
+  db.Workout.aggregate([
+    {
+      $addFields: {
+        totalDuration: {
+          $sum: '$exercises.duration',
+        },
+      },
+    },
+  ])
+    .then((dbWorkouts) => {
+      res.json(dbWorkouts);
     })
-    .catch(err => {
+    .catch((err) => {
       res.json(err);
     });
 });
@@ -16,7 +39,7 @@ router.get("/workouts", (req, res) => {
 
 // POST route for creating new workout plan
 router.post("/api/workouts", (req, res) => {
-  Workout.create(req.body)
+  db.Workout.create(req.body)
     .then(dbWorkout => {
       res.json(dbWorkout);
     })
@@ -29,7 +52,7 @@ router.post("/api/workouts", (req, res) => {
 
 // PUT route for updating and already existing workout plan
 router.put("/api/workouts/:id", (req, res) => {
-  Workout.findOneAndUpdate({ _id: req.params.id }, { $push: { exercises: req.body } }, { new: true })
+  db.Workout.findOneAndUpdate({ _id: req.params.id }, { $push: { exercises: req.body } }, { new: true })
     .then(dbWorkout => {
       res.json(dbWorkout);
     })
@@ -39,14 +62,14 @@ router.put("/api/workouts/:id", (req, res) => {
 });
 
 // GET route for the last exercise -- using date -1
-router.get("api/workouts", (req, res) => {
-  Workout.find({}).sort({ date: -1 })
-  .then((dbWorkout) => {
-    res.json(dbWorkout);
-  }).catch(err => {
-    res.json(err);
-  });
-});
+// router.get("api/workouts", (req, res) => {
+//   Workout.find({}).sort({ date: -1 })
+//   .then((dbWorkout) => {
+//     res.json(dbWorkout);
+//   }).catch(err => {
+//     res.json(err);
+//   });
+// });
 
 
 module.exports = router
