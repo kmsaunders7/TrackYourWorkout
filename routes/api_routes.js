@@ -40,7 +40,7 @@ router.post("/api/workouts", (req, res) => {
 
 // PUT route for updating and already existing workout plan
 router.put("/api/workouts/:id", (req, res) => {
-  db.Workout.findOneAndUpdate({ _id: req.params.id }, { $push: { exercises: req.body } }, { new: true })
+  db.Workout.findByIdAndUpdate({ _id: req.params.id }, { $push: { exercises: req.body } }, { new: true })
     .then(dbWorkout => {
       res.json(dbWorkout);
     })
@@ -50,7 +50,7 @@ router.put("/api/workouts/:id", (req, res) => {
 });
 
 router.get("api/workouts/range", (req, res) => {
-  Workout.find({})
+  db.Workout.find({})
   .then(dbWorkout => {
     res.json(dbWorkout);
   })
